@@ -1,4 +1,6 @@
 # 4K FMV & Pre-Rendered Cutscenes Auto Installer
+Written in C#.
+
 A console program, that has been designed to eliminate the needs of manually installing 4K Remastered FMVs &amp; Pre-Rendered Cutscenes.
 > By all means, this is in Work in Progress. If you wish to contribute just open a pull request.
 
