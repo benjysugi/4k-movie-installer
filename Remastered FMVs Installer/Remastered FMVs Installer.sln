@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remastered FMVs Installer", "Remastered FMVs Installer.csproj", "{31E1FE72-62AA-40DB-8336-E2F2232D718E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31E1FE72-62AA-40DB-8336-E2F2232D718E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31E1FE72-62AA-40DB-8336-E2F2232D718E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31E1FE72-62AA-40DB-8336-E2F2232D718E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31E1FE72-62AA-40DB-8336-E2F2232D718E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {297CD71A-7D42-43BA-BED9-1C3F514B5A3F}
+	EndGlobalSection
+EndGlobal
