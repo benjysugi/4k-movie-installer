@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using Remastered_FMVs_Installer.Game_Specific_Files;
+using Spectre.Console;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -6,6 +7,9 @@ namespace Remastered_FMVs_Installer
 {
     internal class Installer_Main
     {
+        public static string GameFolderPath = "";
+        public static string ExecutableName = "";
+
         [STAThread]
         public static void Main()
         {
@@ -31,11 +35,13 @@ namespace Remastered_FMVs_Installer
                         {
                             case "Yes":
                                 Process.Start("Data\\QuickSFV\\QuickSFV.EXE");
+                                AnsiConsole.MarkupLine($"[{ExternalFunctions.UserTextColour}]When you are done, hit any key to continue.\n\nWhen QuickSFV is opened, you must open the database file.");
+                                ExternalFunctions.ContinuePrompt();
                                 userQuickSFVPrompt = true;
                                 break;
 
                             case "No":
-                                InstallFMVs();
+                                InitialInstallFMVsSetup();
                                 userQuickSFVPrompt = true;
                                 break;
                         }
@@ -44,29 +50,9 @@ namespace Remastered_FMVs_Installer
             }
         }
 
-        static void InstallFMVs()
+        public static void InitialInstallFMVsSetup()
         {
-            void GetGameInformation(string ExecutableName)
-            {
-                switch (ExecutableName)
-                {
-                    case "Bully Scholarship Edition.exe":
-
-                        ExternalFunctions.CreateGameInfoTable(new[] { "Bully: Scholarship Edition", "Rockstar North", "21st of October 2008", "RAGE Engine" });
-
-                        AnsiConsole.MarkupLine("Game: Bully: Scholarship Edition (2005)");
-                        break;
-
-                    default:
-                        AnsiConsole.MarkupLine($"[red]Unknown game selected: {ExecutableName}.[/]\n[{ExternalFunctions.UserTextColour}]If this game's FMVs has already been remastered, but the automatic installation is not supported by this installer, most likely I have either forgotton, or, is currently being worked on.[/]");
-                        break;
-                }
-            }
-
-            string processName = "";
-            string folderPath = "";
-
-            AnsiConsole.MarkupLine("[red]PLEASE NOTE; if you have external HDDs connected to your PC, Windows 10 and 11 will wake these drives up from sleep. This may cause this app to freeze until the drives have woken up.[/]\n");
+            AnsiConsole.MarkupLine("[red]\nPLEASE NOTE; if you have external HDDs connected to your PC, Windows 10 and 11 will wake these drives up from sleep. This may cause this app to freeze until the drives have woken up.[/]\n");
 
             ExternalFunctions.DisplayStorageDriveInfo();
 
@@ -76,7 +62,7 @@ namespace Remastered_FMVs_Installer
 
             AnsiConsole.WriteLine();
 
-            using OpenFileDialog openExecutableDialog = new OpenFileDialog();
+            using OpenFileDialog openExecutableDialog = new();
             openExecutableDialog.Filter = "Game's Exectuable (*.exe)|*.exe";
             openExecutableDialog.Title = "Locate the game's executable";
 
@@ -93,11 +79,36 @@ namespace Remastered_FMVs_Installer
 
                 selectedExecutableName += ".exe";
 
-                GetGameInformation(selectedExecutableName);
+                ExternalFunctions.GameListInformation(selectedExecutableName);
 
                 AnsiConsole.WriteLine($"Selected executable: {selectedExecutableName}");
                 AnsiConsole.WriteLine($"Folder path: {gameFolderPath}");
+
+                ExecutableName = selectedExecutableName;
+                GameFolderPath = gameFolderPath;
             }
+
+            ExternalFunctions.CheckGameExecutableForBackup(ExecutableName);
+
+            ExternalFunctions.CreateMenuPrompt("Would you like to continue to install the 4K FMVs?", new string[] { "Yes", "No" }, true, false);
+
+            switch (ExternalFunctions.UserChoice)
+            {
+                case "Yes":
+                    Bully.CheckForBackupFolder();
+                    AnsiConsole.MarkupLine($"[{ExternalFunctions.UserTextColour}]Backing up the original FMVs...[/]");
+                    ExternalFunctions.CopyDirectory($"{GameFolderPath}\\Movies", $"{GameFolderPath}\\Original_FMVs_Backup\\Movies");
+                    break;
+
+                case "No":
+                    Main();
+                    break;
+            }
+        }
+
+        public static void InstallFMVs()
+        {
+            AnsiConsole.MarkupLine($"[{ExternalFunctions.UserTextColour}]Installing the 4K FMVs...[/]");
         }
     }
 }

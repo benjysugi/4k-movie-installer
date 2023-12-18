@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using Remastered_FMVs_Installer.Game_Specific_Files;
+using Spectre.Console;
 using System.Diagnostics;
 
 namespace Remastered_FMVs_Installer
@@ -7,6 +8,8 @@ namespace Remastered_FMVs_Installer
     {
         public static string UserTextColour = "blue";
         public static string UserChoice = "";
+        public static string GameFolderMoviePath = "";
+        public static string BackupFolderMoviePath = "";
 
         public static void Options()
         {
@@ -55,9 +58,65 @@ namespace Remastered_FMVs_Installer
             }
         }
 
-        public static void GameList()
+        public static void GameListInformation(string ExecutableName)
         {
+            switch (ExecutableName)
+            {
+                case "Bully Scholarship Edition.exe":
 
+                    CreateGameInfoTable(new[] { "Bully: Scholarship Edition", "Rockstar North", "21st of October 2008", "RAGE Engine" });
+
+
+                    //AnsiConsole.MarkupLine("Game: Bully: Scholarship Edition (2005)");
+                    break;
+
+                default:
+                    AnsiConsole.MarkupLine($"[red]Unknown game selected: {ExecutableName}.[/]\n[{ExternalFunctions.UserTextColour}]If this game's FMVs has already been remastered, but the automatic installation is not supported by this installer, most likely I have either forgotton about it, or, is currently being worked on.[/]");
+                    break;
+            }
+        }
+
+        public static void CheckGameExecutableForBackup(string ExecutableName)
+        {
+            switch (ExecutableName)
+            {
+                case "Bully Scholarship Edition.exe":
+                    Bully.CheckForBackupFolder();
+                    GameFolderMoviePath = $"{Installer_Main.GameFolderPath}\\Movies";
+                    BackupFolderMoviePath = $"{Installer_Main.GameFolderPath}\\Original_FMVs_Backup\\Movies";
+                    break;
+
+                default:
+
+                    break;
+            }
+        }
+
+        public static void CopyDirectory(string sourceDir, string destDir)
+        {
+            DirectoryInfo dir = new(sourceDir);
+            
+            // Create destination directory if it doesn't exist
+            if (!Directory.Exists(destDir))
+            {
+                Directory.CreateDirectory(destDir);
+            }
+
+            // Copy files
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                string tempPath = Path.Combine(destDir, file.Name);
+                file.CopyTo(tempPath, true);
+            }
+
+            // Copy subdirectories recursively
+            foreach (DirectoryInfo subDir in dir.GetDirectories())
+            {
+                string tempPath = Path.Combine(destDir, subDir.Name);
+                CopyDirectory(subDir.FullName, tempPath);
+            }
+
+            Installer_Main.InstallFMVs();
         }
 
         public static void ContinuePrompt()
@@ -117,6 +176,29 @@ namespace Remastered_FMVs_Installer
             gameInfoTable.AddRow(RowInfo);
 
             AnsiConsole.Write(gameInfoTable);
+        }
+
+        public static void CreateRemasteredFMVInfoTable(string[] RowInfo)
+        {
+            var remasteredFMVInfoTable = new Table();
+
+            remasteredFMVInfoTable.AddColumn("[green]Remastered Video Resolution[/]");
+            remasteredFMVInfoTable.Columns[0].Centered();
+            remasteredFMVInfoTable.AddColumn("[green]Remastered Video FPS[/]");
+            remasteredFMVInfoTable.Columns[1].Centered();
+            remasteredFMVInfoTable.AddColumn("[green]Remastered Video Codec[/]");
+            remasteredFMVInfoTable.Columns[2].Centered();
+            remasteredFMVInfoTable.AddColumn("[green]Space Required for Installation[/]");
+            remasteredFMVInfoTable.Columns[3].Centered();
+            remasteredFMVInfoTable.Border(TableBorder.Heavy);
+            remasteredFMVInfoTable.DoubleBorder();
+            remasteredFMVInfoTable.BorderStyle(new Style(Spectre.Console.Color.Blue));
+            remasteredFMVInfoTable.Centered();
+            remasteredFMVInfoTable.Title("Remastered FMV Pack information", Style.Parse($"{UserTextColour}"));
+
+            remasteredFMVInfoTable.AddRow(RowInfo);
+
+            AnsiConsole.Write(remasteredFMVInfoTable);
         }
 
         public static void DisplayStorageDriveInfo()
