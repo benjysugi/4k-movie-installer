@@ -396,4 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Misc
 Downloads.7z
+FMVInstaller/lib/RCWF/2022.1.118.40/
